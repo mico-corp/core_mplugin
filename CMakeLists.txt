@@ -147,7 +147,7 @@ install(
 
 # DESTINATION will be automatically prefixed by ${CMAKE_INSTALL_PREFIX}
 install(
-    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include
+    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/src #/include #666
     COMPONENT ${PLUGIN_NAME}
     DESTINATION ${CMAKE_INSTALL_PREFIX}
 )
