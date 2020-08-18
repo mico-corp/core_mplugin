@@ -61,12 +61,17 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODUL
 
 target_compile_options(${PLUGIN_NAME} PUBLIC "-Wall")
 
-find_package(flow REQUIRED)
-if(${flow_FOUND})
-  target_link_libraries(${PLUGIN_NAME}  LINK_PUBLIC flow::flow)
+if(NOT ${BUNDLE_COMPILATION})
+  find_package(flow REQUIRED)
+  if(${flow_FOUND})
+    target_link_libraries(${PLUGIN_NAME}  LINK_PUBLIC flow::flow)
+    target_compile_definitions(${PLUGIN_NAME} PUBLIC HAS_FLOW)
+  endif()
+else()
+  set(flow_FOUND TRUE)
+  target_link_libraries(${PLUGIN_NAME}  LINK_PUBLIC flow)
   target_compile_definitions(${PLUGIN_NAME} PUBLIC HAS_FLOW)
 endif()
-
 
 find_package(PCL QUIET REQUIRED)
 if(${PCL_FOUND})
@@ -125,7 +130,7 @@ install(EXPORT ${PLUGIN_NAME}-targets
 )
 
 configure_file(
-    "${CMAKE_SOURCE_DIR}/cmake/templates/${PLUGIN_NAME}-config.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/templates/${PLUGIN_NAME}-config.cmake.in"
 	"${CMAKE_BINARY_DIR}/${PLUGIN_NAME}-config.cmake"
 	@ONLY
 )
@@ -163,10 +168,12 @@ if(NOT TARGET uninstall)
 endif() 
 
 # FLOW INSTALL target 
-add_custom_target(flow_install
-    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/lib${PLUGIN_NAME}.so 
-                                     $ENV{HOME}/.flow/plugins/lib${PLUGIN_NAME}.so
+add_custom_target(flow_install_${PLUGIN_NAME} ALL
+                COMMAND ${CMAKE_COMMAND} -E copy 	${CMAKE_CURRENT_BINARY_DIR}/lib${PLUGIN_NAME}.so 
+                ${CMAKE_BINARY_DIR}/plugins/lib${PLUGIN_NAME}.so
 )
+add_dependencies(flow_install_${PLUGIN_NAME} ${PLUGIN_NAME})
+
 
 ##################################################
 ####  CPACK deb generation configuration    ######
