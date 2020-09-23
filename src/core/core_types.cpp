@@ -26,11 +26,13 @@
 #include <pcl/point_types.h>
 #include <Eigen/Eigen>
 #include <opencv2/opencv.hpp>
-
+#include <string>
 
 FLOW_TYPE_REGISTER(int, int)
 FLOW_TYPE_REGISTER(bool, bool)
 FLOW_TYPE_REGISTER(float, float)
+FLOW_TYPE_REGISTER(byte, uint8_t)
+FLOW_TYPE_REGISTER(string, std::string)
 FLOW_TYPE_REGISTER(cloud, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr)
 FLOW_TYPE_REGISTER(mat44, Eigen::Matrix4f)
 FLOW_TYPE_REGISTER(vec3, Eigen::Vector3f)
