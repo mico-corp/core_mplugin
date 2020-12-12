@@ -30,6 +30,7 @@ set(PLUGIN_NAME ${PROJECT_NAME}-core)
 file(GLOB_RECURSE MICO_CORE_SOURCE_FILES "src/*.cpp" "src/*.c")
 file(GLOB_RECURSE MICO_CORE_HEADER_FILES "include/*.h" "include/*.inl")
  
+SET(MICO_MODULES ${MICO_MODULES} core PARENT_SCOPE)
 add_library(${PLUGIN_NAME} SHARED ${MICO_CORE_HEADER_FILES} ${MICO_CORE_SOURCE_FILES})
 target_compile_features(${PLUGIN_NAME} PUBLIC cxx_std_17)
 target_include_directories(${PLUGIN_NAME}
