@@ -28,71 +28,36 @@ set(PLUGIN_NAME ${PROJECT_NAME}-core)
 ##################################################
 
 ##################################################
-######    Loading 3rd party libraries.    ########
-##################################################
-
-set(MICO_CORE_INCLUDES "")
-set(MICO_CORE_LIBRARIES "")
-set(MICO_CORE_COMPILE_DEFS "")
-
-if( NOT CMAKE_BUILD_TYPE )
-  set( CMAKE_BUILD_TYPE Release CACHE STRING
-       "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
-       FORCE )
-endif()
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
-
-if(NOT ${BUNDLE_COMPILATION})
-  find_package(flow REQUIRED)
-  if(${flow_FOUND})
-    set(MICO_CORE_LIBRARIES "${MICO_CORE_LIBRARIES} flow::flow")
-    set(MICO_CORE_COMPILE_DEFS "${MICO_CORE_COMPILE_DEFS} HAS_FLOW")
-  endif()
-else()
-  set(flow_FOUND TRUE)
-    set(MICO_CORE_LIBRARIES "${MICO_CORE_LIBRARIES} flow")
-    set(MICO_CORE_COMPILE_DEFS "${MICO_CORE_COMPILE_DEFS} HAS_FLOW")
-endif()
-
-find_package(PCL QUIET REQUIRED)
-if(${PCL_FOUND})
-    set(MICO_CORE_INCLUDES "${MICO_CORE_INCLUDES} ${PCL_INCLUDE_DIRS}")
-    set(MICO_CORE_LIBRARIES "${MICO_CORE_LIBRARIES} ${PCL_LIBRARIES}")
-    set(MICO_CORE_COMPILE_DEFS "${MICO_CORE_COMPILE_DEFS} ENABLE_PCL DISABLE_PCAP DISABLE_PNG DISABLE_LIBUSB_1_0")
-endif()
-
-find_package(OpenCV REQUIRED COMPONENTS core)
-if(${OpenCV_FOUND})
-    set(MICO_CORE_INCLUDES "${MICO_CORE_INCLUDES} ${OpenCV_INCLUDE_DIRS}")
-    set(MICO_CORE_LIBRARIES "${MICO_CORE_LIBRARIES} ${OpenCV_LIBS}")
-    set(MICO_CORE_COMPILE_DEFS "${MICO_CORE_COMPILE_DEFS} HAS_OPENCV")
-endif()
-
-
-##################################################
 ###### Create project and configure ALIAS ########
 ##################################################
 
 file(GLOB_RECURSE MICO_CORE_SOURCE_FILES "src/*.cpp" "src/*.c")
 file(GLOB_RECURSE MICO_CORE_HEADER_FILES "include/*.h" "include/*.inl")
- 
+
 SET(MICO_MODULES ${MICO_MODULES} core PARENT_SCOPE)
-add_library(${PLUGIN_NAME}  ${LIBRARY_MODE} ${MICO_CORE_HEADER_FILES} ${MICO_CORE_SOURCE_FILES})
-target_compile_features(${PLUGIN_NAME} PUBLIC cxx_std_17)
-target_include_directories(${PLUGIN_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
+add_mplugin(  PLUGIN_NAME ${PLUGIN_NAME}
+              PLUGIN_SOURCES ${MICO_CORE_SOURCE_FILES}
+              PLUGIN_HEADERS  ${MICO_CORE_HEADER_FILES} )
 
-#target_compile_options(${PLUGIN_NAME} PUBLIC "-Wall")
 
-add_library(${PROJECT_NAME}::${PLUGIN_NAME} ALIAS ${PLUGIN_NAME})
+##################################################
+######    Loading 3rd party libraries.    ########
+##################################################
 
-target_include_directories(${PLUGIN_NAME} PUBLIC ${MICO_CORE_INCLUDES})
-target_link_libraries(${PLUGIN_NAME} LINK_PUBLIC ${MICO_CORE_LIBRARIES})
-target_compile_definitions(${PLUGIN_NAME} PUBLIC ${MICO_CORE_COMPILE_DEFS})
+find_package(PCL QUIET REQUIRED)
+if(${PCL_FOUND})
+  mplugin_include_directory(${PLUGIN_NAME} ${PCL_INCLUDE_DIRS})
+  mplugin_link_library(${PLUGIN_NAME} ${PCL_LIBRARIES})
+  mplugin_compile_definition(${PLUGIN_NAME} "ENABLE_PCL DISABLE_PCAP DISABLE_PNG DISABLE_LIBUSB_1_0")
+endif()
+
+find_package(OpenCV REQUIRED COMPONENTS core)
+if(${OpenCV_FOUND})
+  mplugin_include_directory(${PLUGIN_NAME} ${OpenCV_INCLUDE_DIRS})
+  mplugin_link_library(${PLUGIN_NAME} ${OpenCV_LIBS})
+  mplugin_compile_definition(${PLUGIN_NAME} "HAS_OPENCV")
+endif()
+
 
 ##################################################
 ######    Documentation.                  ########
@@ -105,29 +70,3 @@ if(DOXYGEN_FOUND)
 						WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 						COMMENT "Generating API documentation with Doxygen" VERBATIM )
 endif(DOXYGEN_FOUND)
-
-##################################################
-######    Installation.                   ########
-##################################################
-# FLOW INSTALL target 
-if(WIN32)
-    set(EXPORTED_PLUGIN_NAME ${PLUGIN_NAME}_mplugin)
-    add_library(${EXPORTED_PLUGIN_NAME} SHARED ${MICO_CORE_HEADER_FILES} ${MICO_CORE_SOURCE_FILES})
-    target_include_directories(${EXPORTED_PLUGIN_NAME} PUBLIC ${MICO_CORE_INCLUDES})
-    target_link_libraries(${EXPORTED_PLUGIN_NAME} LINK_PUBLIC ${MICO_CORE_LIBRARIES})
-    target_compile_definitions(${EXPORTED_PLUGIN_NAME} PUBLIC ${MICO_CORE_COMPILE_DEFS})
-else(UNIX)
-    set(EXPORTED_PLUGIN_NAME ${PLUGIN_NAME} ${PLUGIN_NAME})
-endif()
-
-add_custom_target(flow_install_${PLUGIN_NAME} ALL
-                COMMAND ${CMAKE_COMMAND} -E copy 	$<TARGET_FILE:${EXPORTED_PLUGIN_NAME}>
-                ${CMAKE_BINARY_DIR}/plugins
-)
-add_custom_target(flow_install_${PLUGIN_NAME}_resources ALL
-                COMMAND ${CMAKE_COMMAND} -E copy_directory 	${CMAKE_CURRENT_SOURCE_DIR}/resources 
-                ${CMAKE_BINARY_DIR}/plugins/resources/math
-)
-
-add_dependencies(flow_install_${PLUGIN_NAME} ${PLUGIN_NAME})
-add_dependencies(flow_install_${PLUGIN_NAME}_resources ${PLUGIN_NAME})
