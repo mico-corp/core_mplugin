@@ -21,6 +21,14 @@
 
 
 #include <flow/DataFlow.h>
+//
+//#ifdef _WIN32
+//	// https://stackoverflow.com/a/12229732/1304903
+//	// In windows, there is not proper dynamic loading of libraries so the compiler complains about the undefined definicion of the
+//	// static factory registration.... As what we will do is to load the registration types and block creation, we will just define the 
+//	// variable to allow the generation of the shared library to be loaded by flow_kids.
+//	std::vector<std::string> flow::TypeLog::registeredTypes_ = {};
+//#endif
 
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -39,4 +47,3 @@ FLOW_TYPE_REGISTER(vec3, Eigen::Vector3f)
 FLOW_TYPE_REGISTER(vec4, Eigen::Vector4f)
 FLOW_TYPE_REGISTER(quat, Eigen::Quaternionf)
 FLOW_TYPE_REGISTER(image, cv::Mat)
-
