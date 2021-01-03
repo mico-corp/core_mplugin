@@ -44,10 +44,10 @@ add_mplugin(  PLUGIN_NAME ${PLUGIN_NAME}
 ######    Loading 3rd party libraries.    ########
 ##################################################
 
-find_package(PCL QUIET REQUIRED)
-if(${PCL_FOUND})
-  mplugin_include_directory(${PLUGIN_NAME} ${PCL_INCLUDE_DIRS})
-  mplugin_link_library(${PLUGIN_NAME} ${PCL_LIBRARIES})
+find_package(pcl QUIET REQUIRED)
+if(${pcl_FOUND})
+  mplugin_include_directory(${PLUGIN_NAME} "${pcl_INCLUDE_DIRS}")
+  mplugin_link_library(${PLUGIN_NAME} "${pcl_LIBRARIES}")
   mplugin_compile_definition(${PLUGIN_NAME} ENABLE_PCL DISABLE_PCAP DISABLE_PNG DISABLE_LIBUSB_1_0)
 endif()
 
