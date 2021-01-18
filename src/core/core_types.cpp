@@ -54,12 +54,16 @@ std::any directConversionType(std::any &_input){
     return (OutT_) std::any_cast<InT_>(_input);
 }
 
-const auto directConversionFloatInt = directConversionType<float, int>;
-const auto directConversionIntFloat = directConversionType<int, float>;
-const auto directConversionIntBool = directConversionType<int, bool>;
-const auto directConversionBoolInt = directConversionType<bool, int>;;
+const auto directConversionFloatInt     = directConversionType<float, int>;
+const auto directConversionFloatBool    = directConversionType<float, bool>;
+const auto directConversionIntFloat     = directConversionType<int, float>;
+const auto directConversionIntBool      = directConversionType<int, bool>;
+const auto directConversionBoolInt      = directConversionType<bool, int>;;
+const auto directConversionBoolFloat    = directConversionType<bool, float>;
 
-FLOW_CONVERSION_REGISTER(float, float, int, int, directConversionFloatInt);
-FLOW_CONVERSION_REGISTER(int, int, float, float, directConversionIntFloat);
-FLOW_CONVERSION_REGISTER(int, int, bool, bool, directConversionIntBool);
-FLOW_CONVERSION_REGISTER(bool, bool, int, int, directConversionBoolInt);
+FLOW_CONVERSION_REGISTER(float, int, directConversionFloatInt);
+FLOW_CONVERSION_REGISTER(float, bool, directConversionFloatBool);
+FLOW_CONVERSION_REGISTER(int, float, directConversionIntFloat);
+FLOW_CONVERSION_REGISTER(int, bool, directConversionIntBool);
+FLOW_CONVERSION_REGISTER(bool, int, directConversionBoolInt);
+FLOW_CONVERSION_REGISTER(bool, float, directConversionBoolFloat);
