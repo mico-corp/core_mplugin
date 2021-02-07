@@ -46,20 +46,20 @@ add_mplugin(  PLUGIN_NAME ${PLUGIN_NAME}
 
 find_package(PCL REQUIRED)
 if(${PCL_FOUND})
-  mplugin_include_directory(${PLUGIN_NAME} "${PCL_INCLUDE_DIRS}")
-  mplugin_link_library(${PLUGIN_NAME} "${PCL_LIBRARIES}")
-  mplugin_compile_definition(${PLUGIN_NAME} ENABLE_PCL DISABLE_PCAP DISABLE_PNG DISABLE_LIBUSB_1_0)
+  mplugin_include_directory( PLUGIN_NAME ${PLUGIN_NAME} PLUGIN_INCLUDES ${PCL_INCLUDE_DIRS})
+  mplugin_link_library( PLUGIN_NAME ${PLUGIN_NAME} PLUGIN_LIBRARIES ${PCL_LIBRARIES})
+  mplugin_compile_definition( PLUGIN_NAME ${PLUGIN_NAME} PLUGIN_DEFINITIONS ENABLE_PCL DISABLE_PCAP DISABLE_PNG DISABLE_LIBUSB_1_0)
 endif()
 
 find_package(OpenCV REQUIRED COMPONENTS core)
 if(${OpenCV_FOUND})
-  mplugin_include_directory(${PLUGIN_NAME} ${OpenCV_INCLUDE_DIRS})
-  mplugin_link_library(${PLUGIN_NAME} ${OpenCV_LIBS})
-  mplugin_compile_definition(${PLUGIN_NAME} HAS_OPENCV)
+  mplugin_include_directory( PLUGIN_NAME ${PLUGIN_NAME} PLUGIN_INCLUDES ${OpenCV_INCLUDE_DIRS})
+  mplugin_link_library( PLUGIN_NAME ${PLUGIN_NAME} PLUGIN_LIBRARIES ${OpenCV_LIBS})
+  mplugin_compile_definition( PLUGIN_NAME ${PLUGIN_NAME} PLUGIN_DEFINITIONS HAS_OPENCV)
 endif()
 
 find_package(Eigen3 REQUIRED)
-mplugin_link_library(${PLUGIN_NAME} Eigen3::Eigen)
+mplugin_link_library( PLUGIN_NAME ${PLUGIN_NAME} PLUGIN_LIBRARIES Eigen3::Eigen)
 
 ##################################################
 ######    Documentation.                  ########
