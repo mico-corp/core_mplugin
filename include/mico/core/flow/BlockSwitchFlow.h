@@ -27,17 +27,23 @@
 #include <flow/Block.h>
 
 namespace mico{
+    namespace core{
+        /// Mico block Switches between two input streams using a third boolean input.
+        /// @ingroup  mico_core
+        class BlockSwitchFlow:public flow::Block{
+        public:
+            /// Get name of block
+            virtual std::string name() const override {return "Switch Flow";}        
 
-    class BlockSwitchFlow:public flow::Block{
-    public:
-        virtual std::string name() const override {return "Switch Flow";}        
-        BlockSwitchFlow();
+            /// Base constructor
+            BlockSwitchFlow();
 
-        std::string description() const override {return    "BlockSwitchFlow"
-                                                            "   - Outputs: \n";};
+            /// Returns a brief description of the block
+            std::string description() const override {return    "BlockSwitchFlow"
+                                                                "   - Outputs: \n";};
 
-    };
-
+        };
+    }
 }
 
 

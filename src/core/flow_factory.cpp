@@ -23,7 +23,7 @@
 #include <flow/flow.h>
 #include <mico/core/flow/BlockSwitchFlow.h>
 
-using namespace mico;
+using namespace mico::core;
 using namespace flow;
 
 extern "C" FLOW_FACTORY_EXPORT flow::PluginNodeCreator* factory(){

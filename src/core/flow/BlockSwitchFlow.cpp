@@ -30,6 +30,7 @@
 
 
 namespace mico{
+    namespace core{
         BlockSwitchFlow::BlockSwitchFlow(){
             createPipe<std::any>("output");
 
@@ -50,5 +51,5 @@ namespace mico{
                                     }
             );
         }
-        
+    }
 }
